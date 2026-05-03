@@ -3,18 +3,14 @@ import './App.css'
 import { carPrices } from './data/carPrices'
 import peroduaLogo from '../perodua.png'
 import aruzImage from '../aruz.png'
-import aruzColorImage from '../aruz color.png'
 import alzaImage from '../alza.png'
-import alzaColorImage from '../alza color.png'
 import ativaImage from '../ativa.png'
-import ativaColorImage from '../ativa color.png'
 import myviImage from '../myvi.png'
-import myviColorImage from '../myvi color.png'
 import axiaImage from '../axia.png'
-import axiaColorImage from '../axia color.png'
 import {
   DEFAULT_INTEREST_RATE,
   buildPaymentRows,
+  calculateMonthlyPayment,
   calculateLoanSummary,
   parseInputNumber,
 } from './lib/calculator'
@@ -28,12 +24,69 @@ function formatCurrency(value: number): string {
   return currencyFormatter.format(value)
 }
 
-const modelPreviewAssets: Record<string, { carSrc: string; colorSrc: string }> = {
-  ARUZ: { carSrc: aruzImage, colorSrc: aruzColorImage },
-  ALZA: { carSrc: alzaImage, colorSrc: alzaColorImage },
-  ATIVA: { carSrc: ativaImage, colorSrc: ativaColorImage },
-  MYVI: { carSrc: myviImage, colorSrc: myviColorImage },
-  AXIA: { carSrc: axiaImage, colorSrc: axiaColorImage },
+interface ModelColorOption {
+  label: string
+  swatch: string
+}
+
+interface ModelPreviewAsset {
+  carSrc: string
+  colorSrc?: string
+  colorOptions?: ModelColorOption[]
+}
+
+const modelPreviewAssets: Record<string, ModelPreviewAsset> = {
+  ARUZ: {
+    carSrc: aruzImage,
+    colorOptions: [
+      { label: 'Elegent Black', swatch: '#1a1a1a' },
+      { label: 'Garnet Red*', swatch: '#7d1b2f' },
+      { label: 'Electric Blue', swatch: '#165ec9' },
+      { label: 'Granite Grey', swatch: '#6f7379' },
+      { label: 'Gliterig Silver', swatch: '#b7bcc2' },
+      { label: 'Ivory White', swatch: '#f4f1e8' },
+    ],
+  },
+  ALZA: {
+    carSrc: alzaImage,
+    colorOptions: [
+      { label: 'Vintage Brown*', swatch: '#6b4b3f' },
+      { label: 'Elegant Black', swatch: '#1a1a1a' },
+      { label: 'Garnet Red*', swatch: '#7d1b2f' },
+      { label: 'Glittering Silver', swatch: '#b7bcc2' },
+      { label: 'Ivory White', swatch: '#f4f1e8' },
+    ],
+  },
+  ATIVA: {
+    carSrc: ativaImage,
+    colorOptions: [
+      { label: 'Pearl Delima Red*', swatch: '#8a1f3a' },
+      { label: 'Pearl Diamond White*', swatch: '#f8f7f1' },
+      { label: 'Cobalt Blue*', swatch: '#1f57c8' },
+      { label: 'Granite Grey', swatch: '#6f7379' },
+      { label: 'Glittering Silver', swatch: '#b7bcc2' },
+    ],
+  },
+  MYVI: {
+    carSrc: myviImage,
+    colorOptions: [
+      { label: 'Cranberry Red*', swatch: '#8a2038' },
+      { label: 'Electric Blue', swatch: '#165ec9' },
+      { label: 'Granite Grey', swatch: '#6f7379' },
+      { label: 'Ivory White', swatch: '#f4f1e8' },
+      { label: 'Glittering Silver', swatch: '#b7bcc2' },
+    ],
+  },
+  AXIA: {
+    carSrc: axiaImage,
+    colorOptions: [
+      { label: 'Coral Blue', swatch: '#2e72d2' },
+      { label: 'Granite Grey', swatch: '#6f7379' },
+      { label: 'Lava Red', swatch: '#8f1f2d' },
+      { label: 'Glittering Silver', swatch: '#b7bcc2' },
+      { label: 'Ivory White', swatch: '#f4f1e8' },
+    ],
+  },
 }
 
 function App() {
@@ -77,6 +130,11 @@ function App() {
     () => buildPaymentRows(summary.loanAmount, interestRate),
     [interestRate, summary.loanAmount],
   )
+  const fullLoanNineYearMonthly = useMemo(
+    () => calculateMonthlyPayment(summary.otrPrice, 9, interestRate),
+    [interestRate, summary.otrPrice],
+  )
+
   const selectedModelPreview = modelPreviewAssets[selectedModel]
 
   function handleModelChange(model: string): void {
@@ -267,6 +325,12 @@ function App() {
                     <td>{formatCurrency(row.monthly)}</td>
                   </tr>
                 ))}
+                <tr className="full-loan-row">
+                  <td>9 (Full Loan)</td>
+                  <td>108</td>
+                  <td>{interestRate.toFixed(2)}%</td>
+                  <td>{formatCurrency(fullLoanNineYearMonthly)}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -285,11 +349,29 @@ function App() {
                   src={selectedModelPreview.carSrc}
                   alt={`Perodua ${selectedModel}`}
                 />
-                <img
-                  className="preview-colors"
-                  src={selectedModelPreview.colorSrc}
-                  alt={`${selectedModel} available colors`}
-                />
+                {selectedModelPreview.colorOptions ? (
+                  <ul
+                    className="preview-color-options"
+                    aria-label={`${selectedModel} available colors`}
+                  >
+                    {selectedModelPreview.colorOptions.map((option) => (
+                      <li key={option.label} className="preview-color-option">
+                        <span
+                          className="preview-color-swatch"
+                          style={{ backgroundColor: option.swatch }}
+                          aria-hidden="true"
+                        />
+                        <span>{option.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <img
+                    className="preview-colors"
+                    src={selectedModelPreview.colorSrc}
+                    alt={`${selectedModel} available colors`}
+                  />
+                )}
               </div>
             </section>
           )}
