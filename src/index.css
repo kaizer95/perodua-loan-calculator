@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Teko:wght@500;600&display=swap');
+
+:root {
+  --bg-main: #dbe6f1;
+  --bg-soft: #edf3f9;
+  --surface: #ffffff;
+  --surface-border: #d8e0ea;
+  --input-bg: #f6f9fc;
+  --text-main: #16212f;
+  --text-muted: #59697e;
+  --accent: #0f7f69;
+  --panel-shadow: 0 14px 34px rgba(35, 58, 84, 0.14);
+
+  font-family: 'Public Sans', 'Segoe UI', sans-serif;
+  color: var(--text-main);
+  background: var(--bg-soft);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background:
+    radial-gradient(circle at 10% 15%, rgba(22, 172, 142, 0.2), transparent 40%),
+    radial-gradient(circle at 92% 88%, rgba(54, 127, 214, 0.15), transparent 46%),
+    linear-gradient(165deg, var(--bg-main), var(--bg-soft));
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+h1,
+h2 {
+  font-family: 'Teko', 'Arial Narrow', sans-serif;
+  color: var(--text-main);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 980px) {
+  #root {
+    display: block;
+    padding: 0.5rem;
+  }
+}
